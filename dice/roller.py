@@ -12,6 +12,12 @@ class D6(Enum):
     Six = 6
 
 
+class DiceCounts:
+    def __init__(self, roll: List[D6]):
+        self.by_dice = d6_counts(roll)
+        self.by_quantity = d6_counts_by_quantity(self.by_dice)
+
+
 def d6_counts(dice: List[D6]) -> Dict[D6, int]:
     counts = {
         D6.One: 0,
@@ -40,15 +46,13 @@ def d6_counts_by_quantity(dice_counts: Dict[D6, int]) -> List[Tuple[int, D6]]:
     return counts
 
 
-def roll_d6() -> int:
-    return randint(1, 6)
+def roll_d6() -> D6:
+    return D6(randint(1, 6))
 
 
-def roll_n_d6(n: int) -> List[int]:
+def roll_n_d6(n: int) -> List[D6]:
     rolls = []
     for x in range(n):
         rolls.append(roll_d6())
 
     return rolls
-
-    
