@@ -279,9 +279,11 @@ def play(num_humans: int, num_ai: int, score_target: int):
 
     max_score = 0
     while max_score < score_target:
-        
+        print("Player {p_index}".format(p_index=game_state.player_turn))
+
         while game_state.turn_state.phase != TurnPhase.End:
             roll = roll_n_d6(game_state.turn_state.remaining_dice)
+            print("Roll: {roll_str}".format(roll_str = list(map(lambda d: d.value, roll))))
 
             actions = get_actions(game_state.turn_state.points, roll)
 
@@ -291,18 +293,21 @@ def play(num_humans: int, num_ai: int, score_target: int):
             else:
                 is_human = game_state.player_turn < num_humans
                 action = choose_action(roll, actions, is_human)
+                print("Chose Action: {points}, {dice}".format(points = action.points, dice = action.remaining_dice))
 
                 game_state.turn_state.points = action.points
                 game_state.turn_state.remaining_dice = action.remaining_dice
 
-                keep_rolling = choose_keep_rolling(game_state.turn_state, is_human)
-
+                keep_rolling = choose_keep_rolling(game_state, is_human)
+                
                 if not keep_rolling:
                     game_state.scores[game_state.player_turn] += game_state.turn_state.points
-                    game_state.turn_state.phase == TurnPhase.End
+                    game_state.turn_state.phase = TurnPhase.End
 
         game_state.player_turn = (game_state.player_turn + 1) % (num_humans + num_ai)
         game_state.turn_state = new_turn()
+        max_score = max(game_state.scores)
+        print("Scores: {scores}".format(scores = game_state.scores))
 
     print("Max score reached")
     print("Scores: {scores}".format(scores = game_state.scores))
@@ -310,7 +315,7 @@ def play(num_humans: int, num_ai: int, score_target: int):
 
 def choose_action(roll: List[D6], actions: List[PostRollAction], is_human: bool) -> PostRollAction:
     if is_human:
-        print("Roll: {roll_str}".format(roll_str = list(map(lambda d: d.value, roll))))
+        # print("Roll: {roll_str}".format(roll_str = list(map(lambda d: d.value, roll))))
         # prompt for choice
         for i, a in enumerate(actions):
             print("Action: {index} - {points}, {dice}".format(index = i, points = a.points, dice = a.remaining_dice))
@@ -323,9 +328,10 @@ def choose_action(roll: List[D6], actions: List[PostRollAction], is_human: bool)
         return max(actions, key=lambda a: a.points)
 
 
-def choose_keep_rolling(turn_state: TurnState, is_human: bool) -> bool:
+def choose_keep_rolling(game_state: GameState, is_human: bool) -> bool:
     if is_human:
-        print("Accumulated points: {points}".format(points = turn_state.points))
+        print("Accumulated turn points: {points}".format(points = game_state.turn_state.points))
+        print("Game scores: {scores}".format(scores = game_state.scores))
         choice = input("Keep rolling [Y/N]? ")
         if choice.lower() == "n":
             return False
@@ -334,14 +340,12 @@ def choose_keep_rolling(turn_state: TurnState, is_human: bool) -> bool:
     else:
         # ai!
         # naive, only quit if you've got at least 300
-        return turn_state.points < 300
+        return game_state.turn_state.points < 300
 
 
 def farkled(actions: List[PostRollAction]) -> bool:
     return len(actions) == 1 and actions[0].remaining_dice == 0
         
 
-
-
 if __name__ == "__main__":
-    play(1, 1, 3000)
+    play(1, 1, 10000)
