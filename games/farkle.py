@@ -2,6 +2,7 @@ from dice.roller import D6, DiceCounts, d6_counts, d6_counts_by_quantity, roll_n
 from abc import ABC
 from enum import Enum
 from typing import List, Dict
+from dice.probability import DiscreteProbability
 
 
 class PostRollAction:
@@ -346,6 +347,100 @@ def choose_keep_rolling(game_state: GameState, is_human: bool) -> bool:
 def farkled(actions: List[PostRollAction]) -> bool:
     return len(actions) == 1 and actions[0].remaining_dice == 0
         
+
+ways_to_make_by_num_dice = {
+    1: {
+        "1": 1,
+        "5": 1,
+        "farkle": 4,
+    },
+    2: {
+        "11": 1,
+        "55": 1,
+        "15": 2,
+        "1": 8,
+        "5": 8,
+        "farkle": 16,
+    },
+    3: {
+        "xxx": 6,
+        "115": 3,
+        "155": 3,
+        "11": 12,
+        "55": 12,
+        "15": 24,
+        "1": 48,
+        "5": 48,
+        "farkle": 60,
+    },
+    4: {
+        "xxxx": 6,
+        "xxx1": 20,
+        "xxx5": 20,
+        "xxx": 80,
+        "1155": 6,
+        "115": 48,
+        "155": 48,
+        "11": 96,
+        "55": 96,
+        "15": 192,
+        "1": 240,
+        "5": 240,
+        "farkle": 204,
+    },
+    5: {
+        "xxxxx": 6,
+        "xxxx1": 25,
+        "xxxx5": 25,
+        "xxxx": 100,
+        "xxx55": 50,
+        "xxx11": 50,
+        "xxx15": 80,
+        "xxx1": 320,
+        "xxx5": 320,
+        "xxx": 680,
+        "1155": 120,
+        "115": 480,
+        "551": 480,
+        "11": 600,
+        "55": 600,
+        "15": 1200,
+        "1": 1020,
+        "5": 1020,
+        "farkle": 600,
+    },
+    6: {
+        "xxxxxx": 6,
+        "xxxxx1": 30,
+        "xxxxx5": 30,
+        "xxxxx": 120,
+        "xxxyyy": 300,
+        "123456": 720,
+        "xxyyzz": 1800,
+        "xxxxyy": 450,
+        "xxxx15": 120,
+        "xxxx1": 480,
+        "xxxx5": 480,
+        "xxxx": 720,
+        "xxx115": 240,
+        "xxx155": 240,
+        "xxx11": 960,
+        "xxx55": 960,
+        "xxx15": 1440,
+        "xxx1": 3120,
+        "xxx5": 3120,
+        "xxx": 4320,
+        "1155": 1080,
+        "115": 3600,
+        "155": 3600,
+        "11": 2520,
+        "55": 2520,
+        "15": 5400,
+        "1": 3600,
+        "5": 3600,
+        "farkle": 1080
+    }
+}
 
 if __name__ == "__main__":
     play(1, 1, 10000)
