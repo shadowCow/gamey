@@ -69,11 +69,13 @@ class AiPlayer(Player):
 class HumanPlayer(Player):
     def __init__(
         self,
+        name: str,
         action_prompt_creator: Callable[[GameState], str],
         action_parser: Callable[[str], Optional[Action]]
     ):
         self.action_prompt_creator = action_prompt_creator
         self.action_parser = action_parser
+        super().__init__(name)
 
 
     def take_action(self, game_state):
